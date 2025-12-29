@@ -1,0 +1,96 @@
+import pandas as pd
+
+# STEP 1: Data
+students = [
+    {"name": "Ali", "math": 85, "english": 78, "science": 90},
+    {"name": "Sara", "math": 92, "english": 88, "science": 95},
+    {"name": "Ahmed", "math": 70, "english": 65, "science": 72},
+    {"name": "Fatima", "math": 88, "english": 90, "science": 85},
+    {"name": "Hassan", "math": 65, "english": 60, "science": 68},
+    {"name": "Zara", "math": 95, "english": 92, "science": 88}
+]
+
+df = pd.DataFrame(students)
+
+print("="*60)
+print("📚 STUDENT GRADE CALCULATOR")
+print("="*60)
+print("\n📊 Original Data:")
+print(df)
+
+# STEP 2: Calculations
+df["total"] = df["math"] + df["english"] + df["science"]
+df["average"] = (df["total"] / 3).round(2)
+
+# STEP 3: Grades
+def calculate_grade(avg):
+    if avg >= 85:
+        return "A"
+    elif avg >= 75:
+        return "B"
+    elif avg >= 60:
+        return "C"
+    else:
+        return "F"
+
+df["grade"] = df["average"].apply(calculate_grade)
+
+# STEP 4: Pass/Fail
+df["status"] = df["average"].apply(lambda x: "Pass" if x >= 60 else "Fail")
+
+print("\n✅ Complete Grade Sheet:")
+print(df)
+
+# STEP 5: Statistics
+print("\n" + "="*60)
+print("📈 CLASS STATISTICS")
+print("="*60)
+print(f"Total Students: {len(df)}")
+print(f"Class Average: {df['average'].mean():.2f}")
+print(f"Highest Score: {df['average'].max():.2f}")
+print(f"Lowest Score: {df['average'].min():.2f}")
+
+print("\n📊 Grade Distribution:")
+print(df["grade"].value_counts())
+
+pass_count = len(df[df["status"] == "Pass"])
+pass_rate = (pass_count / len(df)) * 100
+print(f"\n✅ Pass Rate: {pass_rate:.1f}% ({pass_count}/{len(df)} students)")
+
+# STEP 6: Top Performers
+top_3 = df.nlargest(3, "average")
+
+print("\n" + "="*60)
+print("🏆 TOP 3 PERFORMERS")
+print("="*60)
+
+for idx, row in top_3.iterrows():
+    print(f"{idx+1}. {row['name']}")
+    print(f"   Average: {row['average']} | Grade: {row['grade']}")
+    print(f"   Math: {row['math']} | English: {row['english']} | Science: {row['science']}")
+    print()
+
+# STEP 7: Subject Analysis
+print("="*60)
+print("📚 SUBJECT ANALYSIS")
+print("="*60)
+print(f"Math Average: {df['math'].mean():.2f}")
+print(f"English Average: {df['english'].mean():.2f}")
+print(f"Science Average: {df['science'].mean():.2f}")
+
+print("\n⚠️ Students Needing Help:")
+weak_math = df[df["math"] < 70]
+if len(weak_math) > 0:
+    print(f"Math: {', '.join(weak_math['name'].tolist())}")
+
+weak_english = df[df["english"] < 70]
+if len(weak_english) > 0:
+    print(f"English: {', '.join(weak_english['name'].tolist())}")
+
+weak_science = df[df["science"] < 70]
+if len(weak_science) > 0:
+    print(f"Science: {', '.join(weak_science['name'].tolist())}")
+
+print("\n" + "="*60)
+print("✅ PROJECT COMPLETE!")
+print("="*60)
